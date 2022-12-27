@@ -59,19 +59,37 @@ const rightPaddle = {
 }
 
 const ball = {
-    x: 450,
-    y: 100,
+    x: 0,
+    y: 300,
     r: 20,
     speed: 5,
+    directionX: 1,
+    directionY: 1,
+    _calcPosition: function () {
+        if (
+            (this.y > field.h - this.r && this.directionY > 0) ||
+            (this.y - this.r < 0 && this.directionY < 0)
+            ) 
+         {
+            this._reverseY();
+        }
+    },
+    _reverseX: function () {
+        this.directionX *= -1;
+    },
+    _reverseY: function () {
+        this.directionY *= -1;
+    },
     _move: function () {
-        this.x += 1 * this.speed
-        this.y += 1 * this.speed
+        this.x += this.directionX * this.speed
+        this.y += this.directionY * this.speed
     },
     draw: function () {
         canvasCtx.fillStyle = ("#ffffff");
-        canvasCtx.beginPath()
-        canvasCtx.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false)
-        canvasCtx.fill()
+        canvasCtx.beginPath();
+        canvasCtx.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false);
+        canvasCtx.fill();
+        this._calcPosition();
         this._move();
     }
 }
