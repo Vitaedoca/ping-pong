@@ -63,26 +63,37 @@ const ball = {
     y: 300,
     r: 20,
     speed: 5,
-    directionX: 1,
-    directionY: 1,
+    directionX: 1, // A direção em que a bolinha vai, (-) vai para a esquerda
+    directionY: 1, // A direção em que a bolinha vai, (-) vai para cima
     _calcPosition: function () {
+        // verifica se o jogador número 1 fez um ponto (x > largura da tela)
+        if((this.x > field.w) && (mouse.y == this.y)) {
+            this._reverseX();
+        }
+        
+        
+        
+        // verifica as laterais superior e inferior do campo 
         if (
-            (this.y > field.h - this.r && this.directionY > 0) ||
-            (this.y - this.r < 0 && this.directionY < 0)
+            (this.y > field.h - this.r && this.directionY > 0) || // Quando o tamanho do y for maior do field.h que é o tamanho da tela ele vai redirecionar.  
+            (this.y - this.r < 0 && this.directionY < 0) // Quando o tamanho de y for negativo ele vai redirecionar, multiplicando por - 1.
             ) 
-         {
+        {
+        // rebate a bola invertendo o sinal do eixo Y
             this._reverseY();
         }
     },
     _reverseX: function () {
+        // 1 * -1 = -1
+        // -1 * -1 = 1
         this.directionX *= -1;
     },
     _reverseY: function () {
-        this.directionY *= -1;
+        this.directionY *= -1; // Multiplica o directionY por -1
     },
     _move: function () {
-        this.x += this.directionX * this.speed
-        this.y += this.directionY * this.speed
+        this.x += this.directionX * this.speed // Adiciona -5 ou mais 5, positivo para ir para frente e negativo para ir para tras  
+        this.y += this.directionY * this.speed // Adiciona sempre na posição mais -1 * 5, fazendo assim a direção dele sempre ir pra baixo ou para cima, pois vai começar pra baixo quando for positivo e para cima quando for negativo
     },
     draw: function () {
         canvasCtx.fillStyle = ("#ffffff");
