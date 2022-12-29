@@ -48,8 +48,16 @@ const rightPaddle = {
     y: 0,
     w: lineWidth,
     h: 200,
+    speed: 5,
     _move: function () {
-        this.y = ball.y
+        if(this.y + this.h / 2 < ball.y + ball.r) {
+            this.y += this.speed 
+        } else {
+            this.y -= this.speed
+        }
+    },
+    speedUp: function () {
+        this.speed += 2 
     },
     draw: function () {
         canvasCtx.fillStyle = ("#ffffff");
@@ -58,8 +66,28 @@ const rightPaddle = {
     }
 }
 
+const score = {
+    human: 0,
+    computer: 0,
+    increaseHuman: function() {
+        this.human++
+    },
+    increaseComputer: function() {
+        this.computer++
+    },
+    draw: function () {
+        canvasCtx.font = "bold 72px Arial"
+        canvasCtx.textAlign = "center"
+        canvasCtx.textBaseline = "top"
+        canvasCtx.fillStyle = "#01341D"
+        canvasCtx.fillText(this.human, field.w / 4, 50)
+        canvasCtx.fillText(this.computer, field.w / 1.5, 50)
+    }
+
+}
+
 const ball = {
-    x: 0,
+    x: 300,
     y: 300,
     r: 20,
     speed: 5,
@@ -67,8 +95,30 @@ const ball = {
     directionY: 1, // A direção em que a bolinha vai, (-) vai para cima
     _calcPosition: function () {
         // verifica se o jogador número 1 fez um ponto (x > largura da tela)
-        if((this.x > field.w) && (mouse.y == this.y)) {
-            this._reverseX();
+        if(this.x > field.w - this.r - rightPaddle.w - gapX) {
+            if( 
+                this.y + this.r > rightPaddle.y &&
+                this.y - this.r < rightPaddle.y + rightPaddle.h   
+            ) {
+              // rebate a bola invertendo o sinal do x  
+              this._reverseX();
+            } else {
+              // Pontuar jogador 1
+              score.increaseHuman();
+              this._pointUp();
+            }
+        }
+
+        if(this.x < 0 + this.r + leftPaddle.w + gapX) {
+            if(this.y + this.r > leftPaddle.y &&
+               this.y - this.r < leftPaddle.y + leftPaddle.h 
+            ) {
+
+                this._reverseX();
+            } else {
+               score.increaseComputer();
+               this. _pointUp();
+            }
         }
         
         
@@ -91,6 +141,15 @@ const ball = {
     _reverseY: function () {
         this.directionY *= -1; // Multiplica o directionY por -1
     },
+    _speedUp: function () {
+        this.speed += 1; // Aumentar a velocidade da bola
+    },
+    _pointUp: function () {
+        this._speedUp();
+      
+        this.x = field.w / 2;
+        this.y = field.h / 2;
+    },
     _move: function () {
         this.x += this.directionX * this.speed // Adiciona -5 ou mais 5, positivo para ir para frente e negativo para ir para tras  
         this.y += this.directionY * this.speed // Adiciona sempre na posição mais -1 * 5, fazendo assim a direção dele sempre ir pra baixo ou para cima, pois vai começar pra baixo quando for positivo e para cima quando for negativo
@@ -105,19 +164,6 @@ const ball = {
     }
 }
 
-const score = {
-    human: 2,
-    computer: 2,
-    draw: function () {
-        canvasCtx.font = "bold 72px Arial"
-        canvasCtx.textAlign = "center"
-        canvasCtx.textBaseline = "top"
-        canvasCtx.fillStyle = "#01341D"
-        canvasCtx.fillText(this.human, field.w / 4, 50)
-        canvasCtx.fillText(this.computer, field.w / 1.5, 50)
-    }
-
-}
 
 function setup() {
     canvasEl.width = canvasCtx.width = field.w; // Seleciono o tamnho do meu elemento no caso é toda a largura
